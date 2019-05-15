@@ -9,8 +9,8 @@
         <DropdownItem name="message">
           消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>
         </DropdownItem>
-        <DropdownItem name="order">
-          订单中心<Badge style="margin-left: 10px" :count="orderUnreadCount"></Badge>
+        <DropdownItem name="setting">
+          设置<Badge style="margin-left: 10px" ></Badge>
         </DropdownItem>
         <DropdownItem name="logout">退出登录</DropdownItem>
       </DropdownMenu>
@@ -42,10 +42,9 @@ export default {
       'handleLogOut'
     ]),
     logout () {
-      this.handleLogOut().then(() => {
-        this.$router.push({
-          name: 'login'
-        })
+      this.handleLogOut()
+      this.$router.push({
+        name: 'login'
       })
     },
     message () {
@@ -63,8 +62,6 @@ export default {
         case 'logout': this.logout()
           break
         case 'message': this.message()
-          break
-        case 'order': this.order()
           break
       }
     }

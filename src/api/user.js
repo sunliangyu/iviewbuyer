@@ -14,11 +14,10 @@ export const registry = ({ username, password }) => {
   })
 }
 
-export const login = ({ username, password }) => {
-  console.log(axios)
+export const login = ({ username, password, restaurant }) => {
   return axios.request({
-    url: 'system/system/login',
-    data: JSON.stringify({ 'username': username, 'password': password }),
+    url: 'client/client/login',
+    data: JSON.stringify({ 'username': username, 'password': password, 'restaurant': restaurant }),
     method: 'post',
     timeout: 1000 * 60 * 2,
     headers: {
@@ -28,7 +27,7 @@ export const login = ({ username, password }) => {
 
 export const getUserInfo = (token) => {
   return axios.request({
-    url: 'system/system/getUserInfo',
+    url: 'client/client/getUserInfo',
     data: JSON.stringify({ 'token': token }),
     headers: {
     },
@@ -38,12 +37,7 @@ export const getUserInfo = (token) => {
 }
 
 export const logout = (restaurant) => {
-  return axios.request({
-    url: 'logout',
-    timeout: 1000 * 60 * 2,
-    method: 'post',
-    data: JSON.stringify({ 'restaurant': restaurant })
-  })
+  // 未写 后期进行长连接 websocket 的时候添加
 }
 
 export const getUnreadCount = (restaurant) => {
@@ -88,12 +82,32 @@ export const hasRead = msg_id => {
     data: JSON.stringify({ 'mag_id': msg_id })
   })
 }
-
 export const alertmessage = (restaurant, msg_id, state) => {
   return axios.request({
     url: 'system/system/altermessage',
     method: 'post',
     timeout: 1000 * 60 * 2,
     data: JSON.stringify({ 'restaurant': restaurant, 'msg_id': msg_id, 'state': state })
+  })
+}
+
+export const cifQuiryOrder = ({ restaurant, start, condition, quality, page, user }) => {
+  return axios.request({
+    url: 'client/order/cifQuiryOrder',
+    method: 'post',
+    timeout: 1000 * 60 * 2,
+    data: JSON.stringify({ 'restaurant': restaurant, 'start': start, 'condition': condition, 'quality': quality, 'page': page, 'user': user })
+  })
+}
+
+export const getcart = ({ restaurant, cif }) => {
+  return axios.request({
+    url: 'kitchen/food/getCart',
+    method: 'get',
+    timeout: 1000 * 60 * 2,
+    params: {
+      restaurant,
+      cif
+    }
   })
 }

@@ -10,16 +10,6 @@ export const getfoodClass = ({ restaurant }) => {
     }
   })
 }
-
-export const addFood = ({ restaurant, type, food }) => {
-  return axios.request({
-    url: 'kitchen/food/addFood',
-    method: 'post',
-    timeout: 1000 * 60 * 2,
-    data: JSON.stringify({ 'restaurant': restaurant, 'type': type, 'addFood': food })
-  })
-}
-
 export const getFoodById = ({ restaurant, id }) => {
   return axios.request({
     url: 'kitchen/food/getFoodById',
@@ -44,55 +34,12 @@ export const getFoodsByClass = ({ restaurant, type }) => {
   })
 }
 
-export const deleteFoodById = ({ restaurant, id }) => {
+export const getRestaurants = () => {
   return axios.request({
-    url: 'kitchen/food/deleteFood',
+    url: 'system/system/getRestaurants',
     method: 'get',
     timeout: 1000 * 60 * 2,
     params: {
-      restaurant,
-      id
     }
   })
-}
-
-export const updateFood = ({ restaurant, name, des, price, cost, add, dfood, id }) => {
-  return axios.request({
-    url: 'kitchen/food/updateFood',
-    method: 'post',
-    timeout: 1000 * 60 * 2,
-    data: JSON.stringify({ 'restaurant': restaurant, 'des': des, 'price': price, 'cost': cost, 'add': add, 'dfood': dfood, 'id': id, 'name': name })
-  })
-}
-
-export const getImage = ({ restaurant, id }) => {
-  return axios.request({
-    url: 'kitchen/food/getImage',
-    method: 'get',
-    timeout: 1000 * 60 * 2,
-    params: {
-      restaurant,
-      id
-    }
-  })
-}
-
-export const addoutflow = ({ restaurant, id, name, count, price, remark }) => {
-  return axios.request({
-    url: 'kitchen/kitchen/addoutflow',
-    method: 'post',
-    timeout: 1000 * 60 * 2,
-    data: JSON.stringify({ 'restaurant': restaurant, 'des': remark, 'price': price, 'count': count, 'id': id, 'name': name })
-  })
-}
-
-export const getMateFlow = ({ restaurant, time, id, page }) => {
-  return axios.request(
-    {
-      url: 'kitchen/kitchen/getMateFlow',
-      method: 'post',
-      timeout: 1000 * 60 * 2,
-      data: JSON.stringify({ 'restaurant': restaurant, 'time': time, 'page': page, 'id': id })
-    }
-  )
 }

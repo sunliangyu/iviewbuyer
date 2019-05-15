@@ -8,7 +8,7 @@
       <Card icon="log-in" title="欢迎登录" :bordered="false">
         <div class="form-con">
           <login-form @on-success-valid="handleSubmit"></login-form>
-          <p class="login-tip">请输入账号密码</p>
+          <p class="login-tip">请输入账号密码以及餐厅</p>
         </div>
       </Card>
     </div>
@@ -27,8 +27,8 @@ export default {
       'handleLogin',
       'getUserInfo'
     ]),
-    handleSubmit ({ userName, password }) {
-      this.handleLogin({ userName, password }).then(res => {
+    handleSubmit ({ userName, password, restaurant }) {
+      this.handleLogin({ userName, password, restaurant }).then(res => {
         this.getUserInfo().then(res => {
           this.$router.push({
             name: this.$config.homeName

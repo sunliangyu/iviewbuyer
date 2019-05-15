@@ -1,5 +1,4 @@
 import Main from '@/components/main'
-import parentView from '@/components/parent-view'
 
 /**
  * iview-admin中meta除了原生参数外可配置的参数:
@@ -51,136 +50,10 @@ export default [
     ]
   },
   {
-    path: '/message',
-    name: 'inform',
-    component: Main,
-    meta: {
-      //  hideInBread: true,  hideInMenu: false,
-      icon: 'logo-buffer',
-      title: '通知'
-    },
-    children: [
-      {
-        path: 'message_page',
-        name: 'message_page',
-        meta: {
-          icon: 'md-notifications',
-          title: '消息中心'
-        },
-        component: () => import('@/view/single-page/message/index.vue')
-      },
-      {
-        path: 'order_page',
-        name: 'order_page',
-        meta: {
-          icon: 'ios-basket',
-          title: '订单中心'
-        },
-        component: () => import('@/view/single-page/order/index.vue')
-      }
-    ]
-  },
-  {
-    path: '/meterials',
-    name: 'meterials',
-    meta: {
-      icon: 'md-notifications',
-      title: '物品管理'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'add',
-        name: 'add_material',
-        meta: {
-          icon: 'ios-add',
-          title: '添加物品'
-        },
-        component: () => import('@/view/materials/add.vue')
-      },
-      {
-        path: 'inquire',
-        name: 'inquire_material',
-        meta: {
-          icon: 'ios-hammer',
-          title: '查询&修改物品信息'
-        },
-        component: () => import('@/view/materials/inquiry.vue')
-      }
-    ]
-  },
-  {
-    path: '/food',
-    name: 'food',
-    meta: {
-      icon: 'logo-snapchat',
-      title: '菜单管理'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'add',
-        name: 'add_food',
-        meta: {
-          icon: 'ios-add',
-          title: '添加菜单'
-        },
-        component: () => import('@/view/food/add.vue')
-      },
-      {
-        path: 'update',
-        name: 'update_food',
-        meta: {
-          icon: 'ios-hammer',
-          title: '查询&修改菜单信息'
-        },
-        component: () => import('@/view/food/update.vue')
-      },
-      {
-        path: 'image',
-        name: '图片管理',
-        meta: {
-          icon: 'ios-hammer',
-          title: '菜单图片管理'
-        },
-        component: () => import('@/view/food/image.vue')
-      }
-    ]
-  },
-  {
-    path: '/excel',
-    name: 'excel',
-    meta: {
-      icon: 'ios-stats',
-      title: 'EXCEL导入导出'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'upload-excel',
-        name: 'upload-excel',
-        meta: {
-          icon: 'md-add',
-          title: '导入EXCEL'
-        },
-        component: () => import('@/view/excel/upload-excel.vue')
-      },
-      {
-        path: 'export-excel',
-        name: 'export-excel',
-        meta: {
-          icon: 'md-download',
-          title: '导出EXCEL'
-        },
-        component: () => import('@/view/excel/export-excel.vue')
-      }
-    ]
-  },
-  {
     path: '/order',
     name: 'order',
     meta: {
-      icon: 'logo-yen',
+      icon: 'ios-chatbubbles',
       title: '订单管理'
     },
     component: Main,
@@ -189,7 +62,7 @@ export default [
         path: 'inquiry',
         name: 'order_inquiry',
         meta: {
-          icon: 'md-stats',
+          icon: 'ios-add',
           title: '订单查询'
         },
         component: () => import('@/view/order/inquiry.vue')
@@ -197,91 +70,22 @@ export default [
     ]
   },
   {
-    path: '/output',
-    name: 'output',
+    path: '/cart',
+    name: 'cart',
     meta: {
-      icon: 'logo-yen',
-      title: '物品支出管理'
+      icon: 'ios-chatbubbles',
+      title: '购物车'
     },
     component: Main,
     children: [
       {
-        path: 'add',
-        name: 'output_add',
+        path: 'cart',
+        name: 'cart_inquiry',
         meta: {
           icon: 'ios-add',
-          title: '物品支出添加'
+          title: '购物车'
         },
-        component: () => import('@/view/output/add.vue')
-      },
-      {
-        path: 'in',
-        name: 'output_in',
-        meta: {
-          icon: 'md-stats',
-          title: '物品支出查询'
-        },
-        component: () => import('@/view/output/inquiry.vue')
-      }
-    ]
-  },
-  {
-    path: '/multilevel',
-    name: 'multilevel',
-    meta: {
-      icon: 'md-menu',
-      title: '多级菜单'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'level_2_1',
-        name: 'level_2_1',
-        meta: {
-          icon: 'md-funnel',
-          title: '二级-1'
-        },
-        component: () => import('@/view/multilevel/level-2-1.vue')
-      },
-      {
-        path: 'level_2_2',
-        name: 'level_2_2',
-        meta: {
-          access: ['super_admin'],
-          icon: 'md-funnel',
-          showAlways: true,
-          title: '二级-2'
-        },
-        component: parentView,
-        children: [
-          {
-            path: 'level_2_2_1',
-            name: 'level_2_2_1',
-            meta: {
-              icon: 'md-funnel',
-              title: '三级'
-            },
-            component: () => import('@/view/multilevel/level-2-2/level-2-2-1.vue')
-          },
-          {
-            path: 'level_2_2_2',
-            name: 'level_2_2_2',
-            meta: {
-              icon: 'md-funnel',
-              title: '三级'
-            },
-            component: () => import('@/view/multilevel/level-2-2/level-2-2-2.vue')
-          }
-        ]
-      },
-      {
-        path: 'level_2_3',
-        name: 'level_2_3',
-        meta: {
-          icon: 'md-funnel',
-          title: '二级-3'
-        },
-        component: () => import('@/view/multilevel/level-2-3.vue')
+        component: () => import('@/view/cart/cart.vue')
       }
     ]
   },

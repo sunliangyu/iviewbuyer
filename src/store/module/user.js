@@ -1,38 +1,26 @@
 import {
   login,
-  logout,
   getUserInfo,
   getMessage,
   getContentByMsgId,
   alertmessage,
-  getUnreadCount
+  getUnreadCount,
+  cifQuiryOrder,
+  getcart
 } from '@/api/user'
 import {
-  getOrders,
   getOrderById,
-  operateOrder,
-  getHome,
-  getPie,
-  getBar,
-  getMaterial,
-  getSpecific,
-  alertMaterial,
-  checkName,
-  saveMaterial,
-  deleteMaterial,
-  orderpage
+  getorderlist,
+  orderCount,
+  getprogress
 } from '@/api/order'
 
 import {
   getfoodClass,
-  addFood,
   getFoodsByClass,
-  deleteFoodById,
   getFoodById,
-  updateFood,
   getImage,
-  addoutflow,
-  getMateFlow
+  getRestaurants
 } from '@/api/food'
 
 import { setToken, getToken } from '@/libs/util'
@@ -40,23 +28,12 @@ import { setToken, getToken } from '@/libs/util'
 export default {
   state: {
     userName: '',
-    userId: 0,
+    userId: '',
     avatarImgPath: '',
     restaurant: 0,
-    job: '',
     token: getToken(),
     access: '',
-    hasGetInfo: false,
-    unreadCount: 0,
-    messageUnreadList: [],
-    messageReadedList: [],
-    messageTrashList: [],
-    orderUnreadList: [],
-    orderReceiveList: [],
-    orderRefuseList: [],
-    messageContentStore: {},
-    orderContentStore: {},
-    unreadorder: 0
+    hasGetInfo: false
   },
   mutations: {
     setAvatar (state, avatarPath) {
@@ -81,67 +58,28 @@ export default {
     setMessageCount (state, count) {
       state.unreadCount = count
     },
-    setMessageUnreadList (state, list) {
-      state.messageUnreadList = list
-    },
-    setMessageReadedList (state, list) {
-      state.messageReadedList = list
-    },
-    setMessageTrashList (state, list) {
-      state.messageTrashList = list
-    },
-    setOrderUnreadList (state, list) {
-      state.orderUnreadList = list
-    },
-    setOrderReceiveList (state, list) {
-      state.orderReceiveList = list
-    },
-    setOrderRefuseList (state, list) {
-      state.orderRefuseList = list
-    },
     setRestaurant (state, id) {
       state.restaurant = id
-    },
-    setUnreadorder (state, unreadorder) {
-      state.unreadorder = unreadorder
-    },
-    updateMessageContentStore (state, { msg_id, content }) {
-      state.messageContentStore[msg_id] = content
-    },
-    moveMsg (state, { from, to, msg_id }) {
-      const index = state[from].findIndex(_ => _.msg_id === msg_id)
-      const msgItem = state[from].splice(index, 1)[0]
-      msgItem.loading = false
-      state[to].unshift(msgItem)
-    },
-    // 更新当前订单信息
-    updateOrder (state, { order, content }) {
-      state.orderContentStore[order] = content
     }
   },
   getters: {
-    messageUnreadCount: state => state.messageUnreadList.length,
-    messageReadedCount: state => state.messageReadedList.length,
-    messageTrashCount: state => state.messageTrashList.length,
-    orderUnreadCount: state => state.orderUnreadList.length,
-    orderReceiveCount: state => state.orderReceiveList.length,
-    orderRefuseCount: state => state.orderRefuseList.length,
     userid: state => state.userId,
-    restaurant: state => state.restaurant,
-    unreadorder: state => state.unreadorder
+    restaurant: state => state.restaurant
   },
   actions: {
     // 登录
-    handleLogin ({ commit }, { userName, password }) {
+    handleLogin ({ commit }, { userName, password, restaurant }) {
       var username = userName.trim()
       return new Promise((resolve, reject) => {
         login({
           username,
-          password
+          password,
+          restaurant
         }).then(res => {
           const data = res.data
           if (data.token == null) {
-            resolve()
+            alert('账户或者密码错误')
+            reject(res.message)
           } else {
             commit('setToken', data.token)
             resolve()
@@ -154,13 +92,8 @@ export default {
     // 退出登录
     handleLogOut ({ state, commit }) {
       return new Promise((resolve, reject) => {
-        logout(state.restaurant).then(() => {
-          commit('setToken', '')
-          commit('setAccess', [])
-          resolve()
-        }).catch(err => {
-          reject(err)
-        })
+        commit('setToken', '')
+        commit('setAccess', [])
       })
     },
     // 获取用户相关信息
@@ -196,7 +129,6 @@ export default {
       getUnreadCount(state.restaurant).then(res => {
         const data = res.data
         commit('setMessageCount', data.message)
-        commit('setUnreadorder', data.order)
       })
     },
     // 获取消息列表，其中包含未读、已读、回收站三个列表
@@ -287,46 +219,6 @@ export default {
         })
       })
     },
-    // 接受操作
-    receiveOrders: function ({ commit, state }, msg_id) {
-      const operate = 'b'
-      const restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        operateOrder(msg_id, restaurant, operate, null).then(
-          () => {
-            commit('moveMsg', {
-              from: 'orderUnreadList',
-              to: 'orderReceiveList',
-              msg_id
-            })
-            resolve()
-          }
-        ).catch(
-          error => {
-            reject(error)
-          }
-        )
-      }
-      )
-    },
-    refuseOrders: function ({ commit, state }, { msg_id, reason }) {
-      const operate = 'c'
-      const restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        operateOrder(msg_id, restaurant, operate, reason).then(
-          () => {
-            commit('moveMsg', {
-              from: 'orderUnreadList',
-              to: 'orderRefuseList',
-              msg_id
-            })
-            resolve()
-          }).catch(error => {
-          reject(error)
-        })
-      }
-      )
-    },
     // 根据当前订单点击的消息的id获取内容
     getOrderContentByMsgId: function ({ commit, state }, order) {
       return new Promise((resolve, reject) => {
@@ -350,125 +242,12 @@ export default {
         })
       })
     },
-    // 获取今天处理订单以及未处理订单
-    getOrders: function ({ commit, state }, user_id) {
-      return new Promise((resolve, reject) => {
-        getOrders(state.restaurant).then(res => {
-          var data = res.data
-          const unread = data.unread
-          const receive = data.receive
-          const refuse = data.refuse
-          commit('setOrderUnreadList', unread)
-          commit('setOrderReceiveList', receive.map(_ => {
-            _.loading = false
-            return _
-          }))
-          commit('setOrderRefuseList', refuse.map(_ => {
-            _.loading = false
-            return _
-          }))
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-    getHome: ({ commit, state }) => {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        getHome(restaurant).then(res => {
-          const data = res.data
-          resolve(data)
-        })
-      })
-    },
-    getpie: ({ commit, state }) => {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        getPie(restaurant).then(res => {
-          const data = res.data
-          resolve(data)
-        })
-      })
-    },
-    getBar: ({ commit, state }) => {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        getBar(restaurant).then(res => {
-          const data = res.data
-          resolve(data)
-        })
-      })
-    },
-    getMaterial: ({ commit, state }, types) => {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        getMaterial({ restaurant, types }).then(res => {
-          const data = res.data
-          resolve(data)
-        })
-      })
-    },
-    getSpecific: ({ commit, state }, id) => {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        getSpecific({ restaurant, id }).then(res => {
-          const data = res.data
-          resolve(data)
-        })
-      })
-    },
-    alertMaterial: ({ commit, state }, { id, save, count, name }) => {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        alertMaterial({ restaurant, id, save, count, name }).then(() => {
-          resolve()
-        })
-      })
-    },
-    checkName ({ commit, state }, { name, type }) {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        checkName({ restaurant, name, type }).then((res) => {
-          var data = res.data
-          resolve(data)
-        })
-      })
-    },
-    saveMaterial  ({ commit, state }, { name, type, count, save }) {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        saveMaterial({ restaurant, name, type, count, save }).then((res) => {
-          var data = res.data
-          resolve(data)
-        })
-      })
-    },
-
-    deleteMaterial ({ commit, state }, { id }) {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        deleteMaterial({ restaurant, id }).then((res) => {
-          var data = res.data
-          resolve(data)
-        })
-      })
-    },
-
     getfoodClass ({ commit, state }) {
       var restaurant = state.restaurant
       return new Promise((resolve, reject) => {
         getfoodClass({ restaurant }).then((res) => {
           var data = res.data
           resolve(data)
-        })
-      })
-    },
-    addFoods ({ commit, state }, { type, food }) {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        addFood({ restaurant, type, food }).then((res) => {
-          resolve()
         })
       })
     },
@@ -490,31 +269,6 @@ export default {
         })
       })
     },
-    deleteFoodById ({ commit, state }, { id }) {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        deleteFoodById({ restaurant, id }).then(() => {
-          resolve()
-        })
-      })
-    },
-    updateFood ({ commit, state }, { name, des, price, cost, add, dfood, id }) {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        updateFood({ restaurant, name, des, price, cost, add, dfood, id }).then(() => {
-          resolve()
-        })
-      })
-    },
-    orderpage ({ commit, state }, { start, condition, quality, page }) {
-      var restaurant = state.restaurant
-      return new Promise((resolve, reject) => {
-        orderpage({ restaurant, start, condition, quality, page }).then(res => {
-          var data = res.data
-          resolve(data)
-        })
-      })
-    },
     getImage ({ commit, state }, id) {
       var restaurant = state.restaurant
       return new Promise((resolve, reject) => {
@@ -524,19 +278,58 @@ export default {
         })
       })
     },
-    addoutflow ({ commit, state }, { id, name, count, price, remark }) {
-      var restaurant = state.restaurant
+    getRestaurants () {
       return new Promise((resolve, reject) => {
-        addoutflow({ restaurant, id, name, count, price, remark }).then(res => {
+        getRestaurants().then(res => {
           var data = res.data
           resolve(data)
         })
       })
     },
-    getMateFlow ({ commit, state }, { time, id, page }) {
+    cifQuiryOrder ({ commit, state }, { start, condition, quality, page }) {
+      var restaurant = state.restaurant
+      var user = state.userId
+      return new Promise((resolve, reject) => {
+        cifQuiryOrder({ restaurant, start, condition, quality, page, user }).then(res => {
+          var data = res.data
+          resolve(data)
+        })
+      })
+    },
+    getorderlist ({ commit, state }, type) {
+      var restaurant = state.restaurant
+      var cif = state.userId
+      return new Promise((resolve, reject) => {
+        getorderlist({ restaurant, cif, type }).then(res => {
+          var data = res.data
+          resolve(data)
+        })
+      })
+    },
+    orderCount ({ commit, state }) {
+      var restaurant = state.restaurant
+      var cif = state.userId
+      return new Promise((resolve, reject) => {
+        orderCount({ restaurant, cif }).then(res => {
+          var data = res.data
+          resolve(data)
+        })
+      })
+    },
+    getprogresss ({ commit, state }, { id }) {
       var restaurant = state.restaurant
       return new Promise((resolve, reject) => {
-        getMateFlow({ restaurant, id, time, page }).then(res => {
+        getprogress({ restaurant, id }).then(res => {
+          var data = res.data
+          resolve(data)
+        })
+      })
+    },
+    getcart ({ commit, state }) {
+      var restaurant = state.restaurant
+      var cif = state.userId
+      return new Promise((resolve, reject) => {
+        getcart({ restaurant, cif }).then(res => {
           var data = res.data
           resolve(data)
         })

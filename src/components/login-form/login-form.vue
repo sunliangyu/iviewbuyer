@@ -14,12 +14,20 @@
         </span>
       </Input>
     </FormItem>
+    <FormItem label="餐厅"  prop="restaurant">
+      <i-select  style="width:200px" filterable v-model="form.restaurant" clearable="true">
+        <i-option v-for="item in restaurants"  :key="item.id" :value="item.id">
+          {{ item.label }}
+        </i-option>
+      </i-select>
+    </FormItem>
     <FormItem>
       <Button @click="handleSubmit" type="primary" long>登录</Button>
     </FormItem>
   </Form>
 </template>
 <script>
+import { mapMutations, mapActions } from 'vuex'
 export default {
   name: 'LoginForm',
   props: {
@@ -43,20 +51,29 @@ export default {
   data () {
     return {
       form: {
-        userName: 'super_admin',
-        password: ''
-      }
+        userName: '',
+        password: '',
+        restaurant: 1
+      },
+      restaurants: []
     }
   },
   computed: {
     rules () {
       return {
         userName: this.userNameRules,
-        password: this.passwordRules
+        password: this.passwordRules,
+        restaurant: this.restaurantRules
       }
     }
   },
   methods: {
+    ...mapMutations([
+      //
+    ]),
+    ...mapActions([
+      'getRestaurants'
+    ]),
     handleSubmit () {
       // return this.$axios({
       //   url: 'http://localhost:8762/user/userlogin',
@@ -71,11 +88,17 @@ export default {
         if (valid) {
           this.$emit('on-success-valid', {
             userName: this.form.userName,
-            password: this.form.password
+            password: this.form.password,
+            restaurant: this.form.restaurant
           })
         }
       })
     }
+  },
+  mounted () {
+    this.getRestaurants().then(res => {
+      this.restaurants = res
+    })
   }
 }
 </script>

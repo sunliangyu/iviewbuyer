@@ -41,5 +41,7 @@ export default {
   order: '订单管理',
   output: '支出管理',
   output_add: '支出增加',
-  output_in: '支出查询'
+  output_in: '支出查询',
+  cart: '购物车',
+  cart_inquiry: '购物车'
 }
