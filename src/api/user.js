@@ -111,3 +111,21 @@ export const getcart = ({ restaurant, cif }) => {
     }
   })
 }
+
+export const alertCart = ({ restaurant, cif, food, num, type }) => {
+  return axios.request({
+    url: 'kitchen/food/alertCart',
+    method: 'post',
+    timeout: 1000 * 60 * 2,
+    data: JSON.stringify({ 'restaurant': restaurant, 'cif': cif, 'food': food, 'num': num, 'type': type })
+  })
+}
+
+export const addCart = ({ restaurant, food, cif }) => {
+  return axios.request({
+    url: 'kitchen/food/addCart',
+    method: 'post',
+    timeout: 1000 * 60 * 2,
+    data: JSON.stringify({ 'restaurant': restaurant, 'food': food, 'cif': cif })
+  })
+}

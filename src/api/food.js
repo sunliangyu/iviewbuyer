@@ -43,3 +43,25 @@ export const getRestaurants = () => {
     }
   })
 }
+
+export const getFoods = ({ restaurant, like, page }) => {
+  return axios.request({
+    url: 'kitchen/food/getMenu',
+    method: 'get',
+    timeout: 1000 * 60 * 2,
+    params: {
+      restaurant, like, page
+    }
+  })
+}
+
+export const getFoodInfo = ({ restaurant, food }) => {
+  return axios.request({
+    url: 'kitchen/food/getFoodInfo',
+    method: 'get',
+    timeout: 1000 * 60 * 2,
+    params: {
+      restaurant, food
+    }
+  })
+}

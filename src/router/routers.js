@@ -90,6 +90,26 @@ export default [
     ]
   },
   {
+    path: '/menu',
+    name: 'menu',
+    meta: {
+      icon: 'ios-chatbubbles',
+      title: '菜单'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'menu',
+        name: 'menu_inquiry',
+        meta: {
+          icon: 'ios-add',
+          title: '购物车'
+        },
+        component: () => import('@/view/menu/menu.vue')
+      }
+    ]
+  },
+  {
     path: '/argu',
     name: 'argu',
     meta: {

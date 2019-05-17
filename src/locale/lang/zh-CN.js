@@ -43,5 +43,7 @@ export default {
   output_add: '支出增加',
   output_in: '支出查询',
   cart: '购物车',
-  cart_inquiry: '购物车'
+  cart_inquiry: '购物车',
+  'menu': '菜单',
+  'menu_inquiry': '菜单'
 }

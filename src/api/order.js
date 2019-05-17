@@ -45,3 +45,12 @@ export const getprogress = ({ restaurant, id }) => {
     }
   })
 }
+
+export const purchase = ({ restaurant, cif, food, address, flag, remark, price, people, count }) => {
+  return axios.request({
+    url: 'client/order/purchase',
+    method: 'post',
+    timeout: 1000 * 60 * 2,
+    data: JSON.stringify({ 'count': count, 'people': people, 'price': price, 'restaurant': restaurant, 'cif': cif, 'food': food, 'address': address, 'flag': flag, 'remark': remark })
+  })
+}

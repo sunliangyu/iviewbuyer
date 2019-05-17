@@ -6,13 +6,16 @@ import {
   alertmessage,
   getUnreadCount,
   cifQuiryOrder,
-  getcart
+  getcart,
+  alertCart,
+  addCart
 } from '@/api/user'
 import {
   getOrderById,
   getorderlist,
   orderCount,
-  getprogress
+  getprogress,
+  purchase
 } from '@/api/order'
 
 import {
@@ -20,7 +23,9 @@ import {
   getFoodsByClass,
   getFoodById,
   getImage,
-  getRestaurants
+  getRestaurants,
+  getFoods,
+  getFoodInfo
 } from '@/api/food'
 
 import { setToken, getToken } from '@/libs/util'
@@ -330,6 +335,53 @@ export default {
       var cif = state.userId
       return new Promise((resolve, reject) => {
         getcart({ restaurant, cif }).then(res => {
+          var data = res.data
+          resolve(data)
+        })
+      })
+    },
+    alertCart ({ commit, state }, { food, num, type }) {
+      var restaurant = state.restaurant
+      var cif = state.userId
+      return new Promise((resolve, reject) => {
+        alertCart({ restaurant, cif, type, food, num }).then(res => {
+          resolve()
+        })
+      })
+    },
+    purchase ({ commit, state }, { food, address, flag, remark, price, people, count }) {
+      var restaurant = state.restaurant
+      var cif = state.userId
+      return new Promise((resolve, reject) => {
+        purchase({ restaurant, cif, food, address, flag, remark, price, people, count }).then(res => {
+          var data = res.data
+          resolve(data)
+        })
+      })
+    },
+    getFoods ({ commit, state }, { like, page }) {
+      var restaurant = state.restaurant
+      return new Promise((resolve, reject) => {
+        getFoods({ restaurant, like, page }).then(res => {
+          var data = res.data
+          resolve(data)
+        })
+      })
+    },
+    addCart ({ commit, state }, food) {
+      var restaurant = state.restaurant
+      var cif = state.userId
+      return new Promise((resolve, reject) => {
+        addCart({ restaurant, cif, food }).then(res => {
+          var data = res.data
+          resolve(data)
+        })
+      })
+    },
+    getFoodInfo ({ commit, state }, food) {
+      var restaurant = state.restaurant
+      return new Promise((resolve, reject) => {
+        getFoodInfo({ restaurant, food }).then(res => {
           var data = res.data
           resolve(data)
         })
